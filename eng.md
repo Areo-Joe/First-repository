@@ -1,0 +1,1 @@
+The bubble is a transparent thing that envelops the baby. It has a two-stage filter that can clean the air, and then uses a fan to draw the clean air into the bubble for the baby to breathe. The bubble isn't completely  sealed, but keeps the inner air at a higher pressure, so that the car fumes can't get in.
