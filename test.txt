@@ -1,0 +1,3 @@
+测试
+<<<<<<< HEAD
+This is a test from Glimmer Recruit.
