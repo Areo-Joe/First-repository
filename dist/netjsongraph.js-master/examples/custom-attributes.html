@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>netjsongraph.js: NetJSON properties</title>
+    <meta charset="utf-8">
+    <link href="../src/netjsongraph.css" rel="stylesheet">
+    <!-- theme can be easily customized via css -->
+    <link href="../src/netjsongraph-theme.css" rel="stylesheet">
+    <style>
+        body{ overflow: hidden }
+        .wireless{ stroke: #669999 }				/* light green */
+        .wireless_weak{ stroke: #ccccff }			/* light grey */
+        .ethernet{ stroke: #00ff00; stroke-opacity: 0.7 }	/* glowing green */
+        .fiber{ stroke: #1f77b4 }
+        .vpn{ stroke: purple; }
+        .njg-node{ fill: #3182bd }
+        .njg-node.gateway{ fill: #ff8000 !important }
+        .njg-link{ stroke-width: 5px }
+        .njg-link:hover,.njg-link.njg-open{
+            stroke-width: 6px !important;
+            stroke-opacity: 0.7 !important
+        }
+        /* legend */
+        #legend{
+            position: absolute;
+            top: auto;
+            left: 5px;
+            bottom: 5px;
+            width: auto;
+            height: auto;
+            max-width: 250px;
+            padding: 0 15px;
+            background: #fbfbfb;
+            border-radius: 2px;
+            border: 1px solid #ccc;
+            color: #6d6357;
+            font-family: Arial, sans-serif;
+            font-family: sans-serif;
+            font-size: 14px;
+        }
+        #legend p{ line-height: 16px; margin: 10px 0 }
+        #legend span{
+            width: 16px;
+            margin-right: 5px;
+        }
+        #legend span.circle{
+            display: inline-block;
+            border-radius: 50%;
+            height: 16px;
+        }
+        #legend span.link{
+            display: inline-block;
+            height: 5px;
+            border-bottom-width: 6px;
+            border-bottom-style: solid;
+        }
+        #legend .node{ background-color: #3182bd }
+        #legend .gateway{ background-color: #ff8000 }
+        #legend .wireless{ border-color: #669999 }		/* light green */
+        #legend .wireless_weak{ border-color: #ccccff }		/* light grey */
+        #legend .ethernet{ border-color: #00ff00 }		/* glowing green */
+        #legend .fiber{ border-color: #1f77b4 }
+        #legend .vpn{ border-color: purple }
+    </style>
+</head>
+<body>
+    <div id="legend">
+        <p><span class="circle node">&nbsp;</span> ordinary node</p>
+        <p><span class="circle gateway">&nbsp;</span> gateway node</p>
+        <p><span class="link wireless">&nbsp;</span> wireless link</p>
+        <p><span class="link wireless_weak">&nbsp;</span> weak wireless link</p>
+        <p><span class="link ethernet">&nbsp;</span> ethernet link</p>
+        <p><span class="link fiber">&nbsp;</span> fiber link</p>
+        <p><span class="link vpn">&nbsp;</span> vpn link</p>
+    </div>
+    <script src="../lib/d3.min.js"></script>
+    <script src="../src/netjsongraph.js"></script>
+    <script>
+        let a = {
+    "type": "NetworkGraph",
+    "label": "Custom Attributes Example",
+    "protocol": "OLSR",
+    "version": "0.6.6.2",
+    "revision": "6ec73b8f5213cc740816f2fd2ff93108",
+    "metric": "ETX",
+    "router_id": "172.16.146.6",
+    "nodes": [
+        {
+            "id": "172.16.146.99",
+            "label": "FusolabNAS",
+            "properties": {
+                "hostname": "NAS.nnx",
+                "gateway": false,
+                "joe": true
+            }
+        },
+        {
+            "id": "172.16.146.6",
+            "label": "Fusolab",
+            "properties": {
+                "hostname": "fusolab.nnx",
+                "gateway": true,
+                "joe": true
+            }
+        },
+        {
+            "id": "172.16.145.2",
+            "label": "Clauzroma",
+            "properties": {
+                "hostname": "clauzroma.nnx",
+                "gateway": false
+            }
+        },
+        {
+            "id": "172.16.146.4",
+            "label": "Lux",
+            "properties": {
+                "hostname": "lux.nnx"
+            }
+        },
+        {
+            "id": "172.16.146.1",
+            "label": "Nino",
+            "properties": {
+                "hostname": "nino.nnx",
+                "gateway": true
+            }
+        },
+        {
+            "id": "172.16.146.7",
+            "label": "Nemesis",
+            "local_addresses": [
+                "10.40.0.129",
+                "10.40.0.130",
+                "10.40.0.131"
+            ],
+            "properties": {
+                "hostname": "nemesis.nnx",
+                "ssh_pub_key": "ba1aed089f9a513cc8e4ae081b935eb6"
+            }
+        }
+    ],
+    "links": [
+        {
+            "source": "172.16.146.6",
+            "target": "172.16.145.2",
+            "cost": 1.2939453125,
+            "properties": {
+                "lq": 0.900,
+                "nlq": 0.497,
+                "bitrate": "20 mbit/s",
+                "type": "fiber"
+            }
+        },
+        {
+            "source": "172.16.146.6",
+            "target": "172.16.146.4",
+            "cost": 1.10011212,
+            "properties": {
+                "lq": 0.940,
+                "nlq": 0.797,
+                "bitrate": "40 mbit/s",
+                "type": "wireless"
+            }
+        },
+        {
+            "source": "172.16.146.6",
+            "target": "172.16.146.1",
+            "cost": 1.0,
+            "properties": {
+                "lq": 1.0,
+                "nlq": 1.0,
+                "bitrate": "30 mbit/s",
+                "type": "vpn"
+            }
+        },
+        {
+            "source": "172.16.145.2",
+            "target": "172.16.146.7",
+            "cost": 12.739,
+            "properties": {
+                "lq": 0.345,
+                "nlq": 0.227,
+                "bitrate": "1 mbit/s",
+                "type": "wireless_weak"
+            }
+        },
+        {
+            "source": "172.16.145.2",
+            "target": "172.16.146.4",
+            "cost": 1.1,
+            "properties": {
+                "lq": 1.0,
+                "nlq": 1.0,
+                "bitrate": "35 mbit/s",
+                "type": "wireless"
+            }
+        },
+        {
+            "source": "172.16.146.99",
+            "target": "172.16.146.6",
+            "cost": 1.0,
+            "properties": {
+                "lq": 1.0,
+                "nlq": 1.0,
+                "bitrate": "1000 mbit/s",
+                "type": "ethernet"
+            }
+        },
+        {
+            "source": "172.16.146.7",
+            "target": "172.16.146.6",
+            "cost": 1.0,
+            "properties": {
+                "lq": 1.0,
+                "nlq": 1.0,
+                "bitrate": "32 mbit/s",
+                "type": "fiber"
+            }
+        },
+        {
+            "source": "172.16.145.2",
+            "target": "172.16.146.1",
+            "cost": 1.0,
+            "properties": {
+                "lq": 1.0,
+                "nlq": 1.0,
+                "bitrate": "29 mbit/s",
+                "type": "wireless"
+            }
+        },
+        {
+            "source": "172.16.146.7",
+            "target": "172.16.146.1",
+            "cost": 1.0,
+            "properties": {
+                "lq": 1.0,
+                "nlq": 1.0,
+                "bitrate": "45 mbit/s",
+                "type": "wireless"
+            }
+        },
+        {
+            "source": "172.16.146.7",
+            "target": "172.16.146.4",
+            "cost": 1.0,
+            "properties": {
+                "lq": 1.0,
+                "nlq": 1.0,
+                "bitrate": "39 mbit/s",
+                "type": "fiber"
+            }
+        }
+    ]
+}
+
+        d3.netJsonGraph(a, {
+            linkDistance: 150,
+            charge: -200,
+            circleRadius: 12,
+            defaultStyle: false,
+            linkClassProperty: "type",
+            nodeClassProperty: ["gateway", "joe"],
+            labelDy: "-1.8em"
+        });
+    </script>
+</body>
+</html>
